@@ -14,10 +14,14 @@ func main()  {
 	//	logger.Error("这是一条日志!!! 值: %d",1000)
 	//	logger.Fatal("这是一条日志!!! 值: %d",1000)
 	//}
-	logger.Debug("这是一条日志!!!")
-	logger.Info("这是一条日志!!! 值: %d",1000)
-	logger.Warn("这是一条日志!!! 值: %d",1000)
-	logger.Error("这是一条日志!!! 值: %d",1000)
-	logger.Fatal("这是一条日志!!! 值: %d",1000)
+	for {
+		logger.Debug("这是一条日志!!!")
+		logger.Info("这是一条日志!!! 值: %d",1000)
+	}
+	//logger.Debug("这是一条日志!!!")
+	//logger.Info("这是一条日志!!! 值: %d",1000)
+	//logger.Warn("这是一条日志!!! 值: %d",1000)
+	//logger.Error("这是一条日志!!! 值: %d",1000)
+	//logger.Fatal("这是一条日志!!! 值: %d",1000)
 
 }
