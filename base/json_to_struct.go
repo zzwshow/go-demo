@@ -48,5 +48,4 @@ func main()  {
 	fmt.Printf("%T\n",tmp2) //类型已经转换为结构体了
 	fmt.Println("tmp2 = ", tmp2) //tmp2 =  {[GO PYTHON JAVA]}
 
-
 }
