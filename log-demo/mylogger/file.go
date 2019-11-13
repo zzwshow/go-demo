@@ -79,15 +79,18 @@ func (f *FileLogger) checkSplit(file *os.File) bool {
 func (f *FileLogger) splitLogFile(ff *os.File) *os.File {
 	// 判断被写入的文件大小是否大于maxSize ,如果大于了设定的大小就切割一份
 	nowStr := time.Now().Format("2006-01-02_15-04-05")
-	fileName := ff.Name() //拿到文件完整路径
-	backupName := fmt.Sprintf("%s_%s",nowStr,fileName)
+	fullfileName := ff.Name() //拿到文件完整路径
+	dir_str := path.Dir(fullfileName)
+	fn_str := path.Base(fullfileName)
+	newFileName := fmt.Sprintf("%s_%s",nowStr,fn_str)
+	backupName := path.Join(dir_str,newFileName)
 	ff.Close()
 	// 备份文件
-	os.Rename(fileName,backupName)
+	os.Rename(fullfileName,backupName)
 	// 新建文件
-	fileObj, err := os.OpenFile(fileName,os.O_CREATE|os.O_WRONLY|os.O_APPEND,0644)
+	fileObj, err := os.OpenFile(fullfileName,os.O_CREATE|os.O_WRONLY|os.O_APPEND,0644)
 	if err != nil{
-		panic(fmt.Errorf("打开日志记录文件:%s 失败!!",fileName))
+		panic(fmt.Errorf("打开日志记录文件:%s 失败!!",fullfileName))
 	}
 	return fileObj
 }
