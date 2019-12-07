@@ -6,9 +6,19 @@ import (
 	"github.com/robfig/cron/v3"
 	"os"
 	"time"
-	
 	"go_crontab/tasks"
 )
+
+
+func createJob(taskname string, parameter string) cron.FuncJob {
+	handler := tasks.CreateHandler(taskname)
+	taskFunc := func() {
+		handler.Run(parameter)
+	}
+	return taskFunc
+}
+
+
 
 func main(){
 	nyc, _ := time.LoadLocation("Asia/Shanghai")
@@ -18,11 +28,14 @@ func main(){
 	defer c.Stop()
 	
 	execTime := "*/4 * * * * *"
-	tasks.InitTaskList()
+	parameter := "我是任务参数"
+	taskname := "healthcheck"
+	t_func :=createJob(taskname,parameter)
 	
-	// t_id,err := c.AddJob(execTime,tmp)
-	// checkError(err)
-	// fmt.Println("param:",t_id)
+	
+	t_id,err := c.AddJob(execTime,t_func)
+	checkError(err)
+	fmt.Println("param:",t_id)
 	select {}
 }
 
@@ -33,3 +46,6 @@ func checkError(err error) {
 		os.Exit(1)
 	}
 }
+
+
+

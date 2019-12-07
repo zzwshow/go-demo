@@ -1,11 +1,16 @@
 package tasks
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type AppYnc struct {
-	App string
 }
 
-func (a AppYnc) Run(){
-	fmt.Println("我是app信息同步任务....")
+func (a *AppYnc) Run(parameter string) (str string, err error) {
+	fmt.Println("我是app信息同步任务....",parameter)
+	return parameter,nil
 }
+
+
+

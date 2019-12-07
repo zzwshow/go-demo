@@ -1,10 +1,29 @@
 package tasks
 
-// func InitTaskList() map[string]interface{}{
-// 	TaskListMap := make(map[string]interface{})
-// 	TaskListMap["t1"] = new(HealthCheck)
-// 	fmt.Println("TaskListMap",TaskListMap["t1"])
-// 	return TaskListMap
-// }
+type Handler interface {
+	Run(string) (string,error)
+}
+
+
+func CreateHandler(tasksname string) Handler{
+	var handler Handler = nil
+	switch tasksname {
+	case "healthcheck":
+		handler = new(HealthCheck)
+	case "appync":
+		handler = new(HealthCheck)
+	}
+	return handler
+}
+
+
+
+
+
+
+
+
+
+
 
 

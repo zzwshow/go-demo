@@ -1,13 +1,18 @@
 package tasks
 
-import "fmt"
+import (
+	"fmt"
+
+)
 
 type HealthCheck struct {
-	Parameter string
 }
 
-func (h HealthCheck) Run(){
-	fmt.Println("我在健康检查任务....", h.Parameter)
+func (h *HealthCheck) Run(parameter string) (str string,err error){
+	fmt.Println("我在健康检查任务....", parameter)
+	return parameter,nil
 }
+
+
 
 
