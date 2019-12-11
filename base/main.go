@@ -1,19 +1,9 @@
 package main
 
-import (
-	"fmt"
-	"reflect"
-)
+import "fmt"
 
-func main(){
-
-	page := 0
-	limit := 0
-	if reflect.ValueOf(page).IsZero() {
-		fmt.Println("true")
-	}
-	if reflect.ValueOf(limit).IsZero() {
-		fmt.Println("false")
-	}
-
+func main() {
+	ops := "ops-123"
+	data := fmt.Sprintf(" 配置: %v", ops)
+	fmt.Println(data)
 }
