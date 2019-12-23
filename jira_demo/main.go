@@ -28,30 +28,53 @@ func (js *JiraClient) ExitsIssueByOps(issueId string) bool {
 	if err != nil {
 		fmt.Println("jira url 连接失败...")
 	}
-	_, _, err = jiraCon.Issue.Get(issueId, nil)
-	if err != nil {
+	iss, res, err := jiraCon.Issue.Get(issueId, nil)
+	if err != nil && res.Status != "200" {
+		fmt.Println("获取 问题信息 failed。。。")
 		return false
 	}
+	fmt.Printf("issue: %#v", iss.Fields.Status.StatusCategory.Name)
 	return true
 }
 
+// func (js *JiraClient) IsEndFinish(issueId string) bool {
+// 	jiraCon, err := js.GetJiraConObj()
+// 	if err != nil {
+// 		fmt.Println("jira url 连接失败...")
+// 	}
+// 	issue, info, err := jiraCon.Issue.Get(issueId, nil)
+// 	if err != nil {
+// 		return false
+// 	}
+// 	fmt.Println("info_status:  ", info.Close)
+// 	fmt.Println("info:  ", issue)
+// 	return true
+// }
+
 func main() {
 	jiraClient := new(JiraClient)
-	jiraClient.Url = "https://jira.yimidida.com/"
-	jiraClient.Username = "zhangzhiwei"
-	jiraClient.Password = "zhiwei123"
+	jiraClient.Url = "https://jira.uce.cn/"
+	jiraClient.Username = "git"
+	jiraClient.Password = "git.ymdd.com"
 	// jiraCon, err := jiraClient.GetJiraConObj()
 	// if err != nil {
 	// 	fmt.Println("jira url 连接失败...")
 	// }
 
-	res := jiraClient.ExitsIssueByOps("ops-3291")
+	res := jiraClient.ExitsIssueByOps("ops-2828")
 	if res {
 		fmt.Println("ok")
 		return
 	}
 	fmt.Println("no")
 
+	// b := jiraClient.IsEndFinish("ops-2828")
+	// if b {
+	// 	fmt.Println(" 又ok")
+	// 	return
+	// }
+
+	fmt.Println(" 又on")
 	// fmt.Printf("%s: %+v\n", issue.Key, issue.Fields.Summary)
 
 }

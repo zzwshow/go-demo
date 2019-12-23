@@ -48,12 +48,12 @@ func init() {
 }
 
 // 检查索引是否存在，返回bool
-func CheckIndexExists(indexName string) bool {
+func CheckIndexExists(indexName string) (err error, ok bool) {
 	exists, err := ESClient.IndexExists(indexName).Do(ctx)
 	if err != nil {
-		panic(err)
+		return err, exists
 	}
-	return exists
+	return nil, exists
 }
 
 // 通用save结构体
@@ -71,20 +71,31 @@ func (ste *ToES) Save() {
 // 重管道读数据并发写入es
 func WriteES(dc chan *ToES) {
 	for data := range dataChan {
-		fmt.Println(data.IndexName)
-		fmt.Println(data.TypeDoc)
-		fmt.Println(data.Data)
+		_, err := ESClient.Index().Index(data.IndexName).Type(data.TypeDoc).BodyJson(data.Data).Do(context.Background())
+		if err != nil {
+			fmt.Printf("写入es 失败")
+			break
+		}
 	}
 }
 
-// // 创建索引 (mapping内容用BodyString传入)
-// func CreateIndex(indexName string, mapping string) error {
-// 	if !CheckIndexExists(indexName) {
-// 		_, err := ESClient.CreateIndex(indexName).BodyString(mapping).Do(ctx)
-// 		if err != nil {
-// 			return err
-// 		}
-// 		return nil
-// 	}
-// 	return nil
-// }
+// 删除索引
+func DeleteEsIndex(indexName string) error {
+	err, ok := CheckIndexExists(indexName)
+	if !ok {
+		return err
+	}
+	_, err = ESClient.DeleteIndex(indexName).Do(ctx)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// 创建索引
+// mapping 如果为空("")则表示不创建模型
+
+//精确搜索
+// term := make(map[string]interface{})
+//模糊匹配
+// match := make(map[string]interface{})
