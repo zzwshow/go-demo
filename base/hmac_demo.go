@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/hmac"
 	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 )
 
@@ -13,27 +14,23 @@ hmac算法是加密的hash算法,它需要一个hash算法（比如sha256获取m
 */
 
 func CheckMAC(msg, msgMAC, key []byte) bool {
-	mac := hmac.New(sha256.New,key) // 创建hash加密算法
-	mac.Write(msg) // 写入数据
-	expectedMAC := mac.Sum(nil) //获取加密后的hash
-	fmt.Println("new: ",expectedMAC)
-	fmt.Println("old: ",msgMAC)
-	return hmac.Equal(expectedMAC,msgMAC) // 比较预期的hash和实际的hash
+	mac := hmac.New(sha256.New, key)       // 创建hash加密算法
+	mac.Write(msg)                         // 写入数据
+	expectedMAC := mac.Sum(nil)            //获取加密后的hash
+	return hmac.Equal(expectedMAC, msgMAC) // 比较预期的hash和实际的hash
 }
 
-
-
-func main(){
+func main() {
 	// 对sha256算法进行hash加密，key随便设置
-	hash := hmac.New(sha256.New,[]byte("abc124")) // 创建对应的sha256哈希加密算法
-	hash.Write([]byte("abc124"))	 // 写入加密数据
-	fmt.Printf("%x\n",hash.Sum(nil))
-	
-	// b := CheckMAC([]byte("abc124"),[]byte("20d9f32758340ab6d82f54d83fdd66810824c743393a513f6b7ea58ef222dbf8"),[]byte("abc124"))
-	
-	// fmt.Println(b)
-	
-	
+	hash := hmac.New(sha256.New, []byte("opsAlertGroup4BI")) // 创建对应的sha256哈希加密算法
+	hash.Write([]byte("ymdd"))                               // 写入加密数据
+	fmt.Println(hex.EncodeToString(hash.Sum(nil)))
+
+	v, _ := hex.DecodeString("27113ff8d0fd4f129e01d508ec02173a726f536c6f54f47f534402fa585b96ff")
+	b := CheckMAC([]byte("ymdd"), v, []byte("opsAlertGroup4BI"))
+
+	fmt.Println(b)
+
 	// // 对md5算法进行hash加密，key随便设置
 	// hash = hmac.New(md5.New,[]byte("abc123666")) // 创建对应的md5哈希加密算法
 	// hash.Write([]byte("abc123")) // 写入加密数据
