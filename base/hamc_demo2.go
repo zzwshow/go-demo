@@ -30,8 +30,8 @@ func CheckHmac(str, hmacStr, salt string) bool {
 func main() {
 	hmacS := GenerateHmacString("ymdd", "JabH4hoCzVY8tCvY")
 	fmt.Println(hmacS)
-
-	b := CheckHmac("ymdd", "e1c336f4db2909ff93af9d840d01cd617929af02a98596403d8a1ec4b524e8ee", "JabH4hoCzVY8tCvY")
-	fmt.Println(b)
+	//
+	//b := CheckHmac("ymdd", "e1c336f4db2909ff93af9d840d01cd617929af02a98596403d8a1ec4b524e8ee", "JabH4hoCzVY8tCvY")
+	//fmt.Println(b)
 
 }
