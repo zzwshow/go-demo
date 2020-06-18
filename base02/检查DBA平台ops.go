@@ -1,4 +1,4 @@
-package dba_issue_check
+package main
 
 import (
 	"encoding/json"
@@ -20,7 +20,7 @@ type DBAResponseStatus struct {
 }
 
 const DBA_WEBSQL = "https://dba.yimidida.com/workflow_api/"
-const opsCode = "ops-1321"
+const opsCode = "ops-3565"
 
 // const headers = `{"User-Agent": "Mozilla/5.0"}`
 
@@ -67,14 +67,17 @@ func TestCheckOpsStatus(opsCode string) bool {
 		return false
 	}
 	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("======>", err)
+	}
 	var dbaRS DBAResponseStatus
 	err = json.Unmarshal(body, &dbaRS)
 	if err != nil {
 		fmt.Println("获取 dba.yimidida.com ops 状态 解析返回值失败... error: ", err)
 		return false
 	}
-	fmt.Println(dbaRS.Status)
+	fmt.Println("---", dbaRS.Status)
 	if dbaRS.Status != "workflow_finish" {
 		return false
 	}
