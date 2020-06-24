@@ -1,0 +1,5 @@
+serverConf:
+  host: ":9991"
+  uri: "/metrics"
+  mqUrl: "https://dtsmq.yimidida.com/consumer/groupList.query"
+  type: "dts_mq"

@@ -1,49 +1,53 @@
 package collector
 
 import (
+	"fmt"
 	"github.com/prometheus/client_golang/prometheus"
-	"runtime"
 	"sync"
 )
 
-//var hostname string
-
 type NodeCollector struct {
-	goroutinesDesc *prometheus.Desc //Gauge
-	threadsDesc    *prometheus.Desc //Gauge
-	mutex          sync.Mutex
+	consumptionGroupDelayDesc *prometheus.Desc //Gauge
+	consumptionGroupTPSDesc   *prometheus.Desc //Gauge
+	consumptionNumberDesc     *prometheus.Desc //Gauge
+	mutex                     sync.Mutex
 }
 
-//初始化采集器
 func NewNodeCollector() prometheus.Collector {
-	//host, _ := host.Info()
-	//hostname = host.Hostname
 	return &NodeCollector{
-		goroutinesDesc: prometheus.NewDesc(
-			"goroutines_num",
-			"协程数.",
-			nil, nil),
-		threadsDesc: prometheus.NewDesc(
-			"threads_num",
-			"线程数",
-			nil, nil),
+		consumptionGroupDelayDesc: prometheus.NewDesc(
+			"rocketMQ_consumption_group_delay_diffTotal",
+			"This value indicates the number of consumption stacks",
+			[]string{"group"}, nil),
+		consumptionGroupTPSDesc: prometheus.NewDesc(
+			"rocketMQ_consumption_group_per_second_TPS",
+			"This value indicates the number of Consumption per second",
+			[]string{"group"}, nil),
+		consumptionNumberDesc: prometheus.NewDesc(
+			"rocketMQ_number_of_consumers",
+			"This value identifies the number of consumers", []string{"group"}, nil),
 	}
 }
 
-// Describe returns all descriptions of the collector.
-//实现采集器Describe接口
 func (n *NodeCollector) Describe(ch chan<- *prometheus.Desc) {
-	ch <- n.goroutinesDesc
-	ch <- n.threadsDesc
+	ch <- n.consumptionGroupDelayDesc
+	ch <- n.consumptionGroupTPSDesc
+	ch <- n.consumptionNumberDesc
 }
 
-// Collect returns the current state of all metrics of the collector.
-//实现采集器Collect接口,真正采集动作
 func (n *NodeCollector) Collect(ch chan<- prometheus.Metric) {
 	n.mutex.Lock()
-	ch <- prometheus.MustNewConstMetric(n.goroutinesDesc, prometheus.GaugeValue, float64(runtime.NumGoroutine()))
-
-	num, _ := runtime.ThreadCreateProfile(nil)
-	ch <- prometheus.MustNewConstMetric(n.threadsDesc, prometheus.GaugeValue, float64(num))
+	data, err := QueryMQInfo(Conf.MqUrl)
+	if err != nil {
+		fmt.Printf("request DTS mq console failed. url: %v error:%v", Conf.MqUrl,err)
+	}
+	if len(data.Data) == 0 {
+		return
+	}
+	for _, i := range data.Data {
+		ch <- prometheus.MustNewConstMetric(n.consumptionGroupDelayDesc, prometheus.GaugeValue, float64(i.DiffTotal), i.Group)
+		ch <- prometheus.MustNewConstMetric(n.consumptionGroupTPSDesc, prometheus.GaugeValue, float64(i.ConsumeTps), i.Group)
+		ch <- prometheus.MustNewConstMetric(n.consumptionNumberDesc, prometheus.GaugeValue, float64(i.Count), i.Group)
+	}
 	n.mutex.Unlock()
 }
